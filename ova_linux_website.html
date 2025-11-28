@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Objeto Virtual de Aprendizaje sobre Sistema Operativo Linux">
+    <title>OVA - Sistema Operativo Linux</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Menú lateral */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .menu-item {
+            margin-bottom: 15px;
+        }
+
+        .menu-link {
+            display: block;
+            color: #333;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .menu-link:hover, .menu-link:focus {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .submenu {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .submenu-link {
+            display: block;
+            color: #666;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .submenu-link:hover, .submenu-link:focus {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+
+        /* Contenido principal */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            width: calc(100% - 280px);
+            background: white;
+        }
+
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: #764ba2;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            color: #667eea;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            color: white;
+            border: none;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .content-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .license-badge {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .authors {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        /* Cuestionario */
+        .quiz {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .question {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question h4 {
+            color: #764ba2;
+            margin-bottom: 15px;
+        }
+
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            background: #e8ecff;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover, .submit-btn:focus {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        /* Botón menú móvil */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 250px;
+            }
+
+            .main-content {
+                margin-left: 250px;
+                width: calc(100% - 250px);
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+                padding-top: 70px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .content-image {
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 15px;
+                padding-top: 70px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .hero {
+                padding: 40px 15px;
+            }
+
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+
+        /* Accesibilidad */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #667eea;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        *:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú de navegación" aria-expanded="false">
+        ☰ Menú
+    </button>
+
+    <div class="container">
+        <nav class="sidebar" id="sidebar" role="navigation" aria-label="Menú principal">
+            <h2>Navegación</h2>
+            <div class="menu-item">
+                <a href="#presentacion" class="menu-link">Presentación</a>
+            </div>
+            <div class="menu-item">
+                <a href="#tema1-1" class="menu-link">1.1 Introducción a Linux</a>
+                <div class="submenu">
+                    <a href="#tema1-1-1" class="submenu-link">Historia de Linux</a>
+                    <a href="#tema1-1-2" class="submenu-link">Filosofía Open Source</a>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="#tema1-2" class="menu-link">1.2 Distribuciones Linux</a>
+                <div class="submenu">
+                    <a href="#tema1-2-1" class="submenu-link">Ubuntu</a>
+                    <a href="#tema1-2-2" class="submenu-link">Debian</a>
+                    <a href="#tema1-2-3" class="submenu-link">Fedora</a>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="#tema1-3" class="menu-link">1.3 Estructura del Sistema</a>
+                <div class="submenu">
+                    <a href="#tema1-3-1" class="submenu-link">Kernel</a>
+                    <a href="#tema1-3-2" class="submenu-link">Sistema de archivos</a>
+                    <a href="#tema1-3-3" class="submenu-link">Directorios principales</a>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="#tema1-4" class="menu-link">1.4 Terminal y Comandos</a>
+                <div class="submenu">
+                    <a href="#tema1-4-1" class="submenu-link">Comandos básicos</a>
+                    <a href="#tema1-4-2" class="submenu-link">Gestión de archivos</a>
+                    <a href="#tema1-4-3" class="submenu-link">Permisos</a>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="#tema1-5" class="menu-link">1.5 Gestión de Procesos</a>
+                <div class="submenu">
+                    <a href="#tema1-5-1" class="submenu-link">Procesos en ejecución</a>
+                    <a href="#tema1-5-2" class="submenu-link">Comandos de gestión</a>
+                </div>
+            </div>
+            <div class="menu-item">
+                <a href="#actividades" class="menu-link">Actividades de Aprendizaje</a>
+            </div>
+        </nav>
+
+        <main class="main-content" id="main-content">
+            <div class="hero">
+                <h1>Sistema Operativo Linux</h1>
+                <p>Objeto Virtual de Aprendizaje</p>
+            </div>
+
+            <section class="section" id="presentacion">
+                <h1>Presentación del OVA</h1>
+                <p>El curso está estructurado para proporcionar una comprensión clara de cómo interactuar con Linux a través de la terminal, incluyendo la gestión de archivos y directorios, así como la ejecución de comandos básicos.</p>
+                
+                <h2>Elementos de Contextualización</h2>
+                <p>Este OVA presenta elementos y conceptos que permiten entender el Sistema Operativo Linux, desde sus fundamentos hasta su aplicación práctica. Está diseñado para estudiantes, profesores, investigadores y cualquier persona entre 16 y 40 años interesada en aprender sobre este poderoso sistema operativo.</p>
+
+                <div class="authors">
+                    <h3>Autores</h3>
+                    <ul>
+                        <li><strong>Israel Bulla Rey</strong></li>
+                        <li><strong>Johan Steven Bueno Rojas</strong></li>
+                        <li><strong>Jose Luis Jiménez Bayona</strong></li>
+                    </ul>
+                </div>
+
+                <h3>Metodología</h3>
+                <p>Este OVA fue creado bajo la <strong>metodología QCHE</strong> del Dr. Raúl E. Rodríguez Ibáñez:</p>
+                <ul>
+                    <li><strong>¿Qué voy a hacer?</strong> - Identificación de objetivos</li>
+                    <li><strong>¿Cómo lo voy a hacer?</strong> - Planificación de estrategias</li>
+                    <li><strong>Hacer</strong> - Ejecución de actividades</li>
+                    <li><strong>Evaluar</strong> - Valoración del aprendizaje</li>
+                </ul>
+
+                <div class="license-badge">
+                    <strong>📜 Licencia:</strong> Creative Commons
+                </div>
+            </section>
+
+            <section class="section" id="tema1-1">
+                <h2>1.1 Introducción a Linux</h2>
+                <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=1200&h=300&fit=crop" alt="Código de Linux en pantalla" class="content-image">
+                <p>Linux es un sistema operativo de código abierto basado en Unix que ha revolucionado el mundo de la tecnología. Su flexibilidad, seguridad y libertad lo hacen ideal para servidores, computadoras personales y dispositivos embebidos.</p>
+
+                <h3 id="tema1-1-1">Historia de Linux</h3>
+                <p>Linux fue creado en 1991 por Linus Torvalds, un estudiante finlandés de ciencias de la computación. Comenzó como un proyecto personal para crear un kernel de sistema operativo libre. Hoy en día, Linux impulsa la mayoría de los servidores de internet, dispositivos Android y supercomputadoras del mundo.</p>
+
+                <h3 id="tema1-1-2">Filosofía Open Source</h3>
+                <p>El software de código abierto permite que cualquiera pueda ver, modificar y distribuir el código fuente. Esta filosofía promueve la colaboración global, la transparencia y la innovación continua. Linux encarna estos principios, siendo mantenido por miles de desarrolladores en todo el mundo.</p>
+            </section>
+
+            <section class="section" id="tema1-2">
+                <h2>1.2 Distribuciones Linux</h2>
+                <img src="https://images.unsplash.com/photo-1640552435388-a54879e72b28?w=1200&h=300&fit=crop" alt="Diferentes logos de distribuciones Linux" class="content-image">
+                <p>Una distribución Linux es una versión completa del sistema operativo que incluye el kernel, herramientas de sistema y aplicaciones. Cada distribución tiene características únicas que la hacen ideal para diferentes propósitos.</p>
+
+                <h3 id="tema1-2-1">Ubuntu</h3>
+                <p>Ubuntu es una de las distribuciones más populares y amigables para principiantes. Basada en Debian, ofrece una interfaz gráfica intuitiva y una amplia comunidad de soporte. Es ideal para usuarios que migran desde Windows o macOS.</p>
+
+                <h3 id="tema1-2-2">Debian</h3>
+                <p>Debian es conocida por su estabilidad y compromiso con el software libre. Es la base de muchas otras distribuciones, incluida Ubuntu. Los administradores de sistemas la prefieren para servidores debido a su confiabilidad.</p>
+
+                <h3 id="tema1-2-3">Fedora</h3>
+                <p>Fedora es patrocinada por Red Hat y se centra en ofrecer las últimas tecnologías. Es perfecta para desarrolladores que quieren trabajar con software de vanguardia y contribuir a proyectos de código abierto.</p>
+            </section>
+
+            <section class="section" id="tema1-3">
+                <h2>1.3 Estructura del Sistema</h2>
+                <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=300&fit=crop" alt="Diagrama de arquitectura de sistema" class="content-image">
+                <p>La arquitectura de Linux es modular y jerárquica, lo que le proporciona flexibilidad y eficiencia. Comprender esta estructura es fundamental para trabajar efectivamente con el sistema.</p>
+
+                <h3 id="tema1-3-1">Kernel</h3>
+                <p>El kernel es el corazón de Linux. Gestiona los recursos del hardware (CPU, memoria, dispositivos) y proporciona servicios esenciales a las aplicaciones. Actúa como puente entre el software y el hardware físico.</p>
+
+                <h3 id="tema1-3-2">Sistema de Archivos</h3>
+                <p>Linux utiliza un sistema de archivos jerárquico que comienza en la raíz (/). Todo en Linux es tratado como un archivo, incluyendo dispositivos de hardware. Los sistemas de archivos más comunes son ext4, btrfs y xfs.</p>
+
+                <h3 id="tema1-3-3">Directorios Principales</h3>
+                <p>Los directorios fundamentales incluyen:</p>
+                <ul>
+                    <li><strong>/home</strong> - Directorios personales de usuarios</li>
+                    <li><strong>/etc</strong> - Archivos de configuración del sistema</li>
+                    <li><strong>/var</strong> - Datos variables como logs</li>
+                    <li><strong>/usr</strong> - Programas y bibliotecas del sistema</li>
+                    <li><strong>/bin</strong> - Comandos básicos del sistema</li>
+                </ul>
+            </section>
+
+            <section class="section" id="tema1-4">
+                <h2>1.4 Terminal y Comandos</h2>
+                <img src="https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=1200&h=300&fit=crop" alt="Terminal de Linux con comandos" class="content-image">
+                <p>La terminal es una herramienta poderosa que permite interactuar con Linux mediante comandos de texto. Aunque puede parecer intimidante al principio, dominarla te da un control total sobre el sistema.</p>
+
+                <h3 id="tema1-4-1">Comandos Básicos</h3>
+                <p>Algunos comandos esenciales para comenzar:</p>
+                <ul>
+                    <li><strong>ls</strong> - Lista archivos y directorios</li>
+                    <li><strong>cd</strong> - Cambia de directorio</li>
+                    <li><strong>pwd</strong> - Muestra el directorio actual</li>
+                    <li><strong>mkdir</strong> - Crea un nuevo directorio</li>
+                    <li><strong>touch</strong> - Crea un archivo vacío</li>
+                </ul>
+
+                <h3 id="tema1-4-2">Gestión de Archivos</h3>
+                <p>Para trabajar con archivos, necesitas conocer estos comandos:</p>
+                <ul>
+                    <li><strong>cp</strong> - Copia archivos o directorios</li>
+                    <li><strong>mv</strong> - Mueve o renombra archivos</li>
+                    <li><strong>rm</strong> - Elimina archivos o directorios</li>
+                    <li><strong>cat</strong> - Muestra el contenido de un archivo</li>
+                    <li><strong>nano/vim</strong> - Editores de texto en terminal</li>
+                </ul>
+
+                <h3 id="tema1-4-3">Permisos</h3>
+                <p>Linux tiene un sistema robusto de permisos que controla quién puede leer, escribir o ejecutar archivos. Los comandos principales son:</p>
+                <ul>
+                    <li><strong>chmod</strong> - Cambia permisos de archivos</li>
+                    <li><strong>chown</strong> - Cambia el propietario de archivos</li>
+                    <li><strong>chgrp</strong> - Cambia el grupo de archivos</li>
+                </ul>
+            </section>
+
+            <section class="section" id="tema1-5">
+                <h2>1.5 Gestión de Procesos</h2>
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=300&fit=crop" alt="Gráficos de monitoreo de procesos" class="content-image">
+                <p>Los procesos son programas en ejecución. Linux permite gestionar múltiples procesos simultáneamente, controlando su ejecución, prioridad y recursos asignados.</p>
+
+                <h3 id="tema1-5-1">Procesos en Ejecución</h3>
+                <p>Cada proceso tiene un identificador único (PID) y consume recursos del sistema. Los procesos pueden estar en diferentes estados: ejecutándose, esperando, detenidos o zombies. El sistema operativo gestiona estos estados automáticamente.</p>
+
+                <h3 id="tema1-5-2">Comandos de Gestión</h3>
+                <p>Para controlar procesos, usa estos comandos:</p>
+                <ul>
+                    <li><strong>ps</strong> - Muestra procesos en ejecución</li>
+                    <li><strong>top/htop</strong> - Monitorea procesos en tiempo real</li>
+                    <li><strong>kill</strong> - Termina un proceso específico</li>
+                    <li><strong>bg/fg</strong> - Envía procesos al fondo o primer plano</li>
+                    <li><strong>jobs</strong> - Lista trabajos activos</li>
+                </ul>
+            </section>
+
+            <section class="section" id="actividades">
+                <h1>Actividades de Aprendizaje</h1>
+                <p>Pon a prueba tus conocimientos con este cuestionario sobre Linux. Lee cada pregunta cuidadosamente y selecciona la respuesta correcta.</p>
+
+                <div class="quiz">
+                    <form id="quizForm" aria-label="Cuestionario sobre Sistema Operativo Linux">
+                        <div class="question">
+                            <h4>1. ¿Quién creó Linux y en qué año?</h4>
+                            <label class="option">
+                                <input type="radio" name="q1" value="a" required aria-required="true">
+                                a) Bill Gates en 1985
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q1" value="b">
+                                b) Linus Torvalds en 1991
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q1" value="c">
+                                c) Steve Jobs en 1990
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q1" value="d">
+                                d) Richard Stallman en 1983
+                            </label>
+                        </div>
+
+                        <div class="question">
+                            <h4>2. ¿Cuál de las siguientes NO es una distribución Linux?</h4>
+                            <label class="option">
+                                <input type="radio" name="q2" value="a" required aria-required="true">
+                                a) Ubuntu
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q2" value="b">
+                                b) Debian
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q2" value="c">
+                                c) Windows Server
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q2" value="d">
+                                d) Fedora
+                            </label>
+                        </div>
+
+                        <div class="question">
+                            <h4>3. ¿Qué comando se utiliza para listar archivos y directorios?</h4>
+                            <label class="option">
+                                <input type="radio" name="q3" value="a" required aria-required="true">
+                                a) cd
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q3" value="b">
+                                b) ls
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q3" value="c">
+                                c) pwd
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q3" value="d">
+                                d) mkdir
+                            </label>
+                        </div>
+
+                        <div class="question">
+                            <h4>4. ¿Qué componente de Linux gestiona los recursos del hardware?</h4>
+                            <label class="option">
+                                <input type="radio" name="q4" value="a" required aria-required="true">
+                                a) El shell
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q4" value="b">
+                                b) El kernel
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q4" value="c">
+                                c) La interfaz gráfica
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q4" value="d">
+                                d) El navegador
+                            </label>
+                        </div>
+
+                        <div class="question">
+                            <h4>5. ¿Qué comando se usa para cambiar permisos de archivos en Linux?</h4>
+                            <label class="option">
+                                <input type="radio" name="q5" value="a" required aria-required="true">
+                                a) chown
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q5" value="b">
+                                b) chmod
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q5" value="c">
+                                c) chgrp
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q5" value="d">
+                                d) rm
+                            </label>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Evaluar Respuestas</button>
+                    </form>
+
+                    <div class="result" id="result" role="alert" aria-live="polite"></div>
+                </div>
+            </section>
+
+            <footer style="text-align: center; padding: 30px; color: #666; border-top: 2px solid #eee; margin-top: 50px;">
+                <p><strong>Objeto Virtual de Aprendizaje - Sistema Operativo Linux</strong></p>
+                <p>Creado por: Israel Bulla Rey, Johan Steven Bueno Rojas y Jose Luis Jiménez Bayona</p>
+                <p>Metodología QCHE del Dr. Raúl E. Rodríguez Ibáñez</p>
+                <p>📜 Licencia Creative Commons</p>
+                <p style="margin-top: 20px; font-size: 0.9rem;">© 2025 - Todos los derechos reservados bajo licencia Creative Commons</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // Menú móvil
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            const isExpanded = sidebar.classList.contains('active');
+            this.setAttribute('aria-expanded', isExpanded);
+            this.textContent = isExpanded ? '✕ Cerrar' : '☰ Menú';
+        });
